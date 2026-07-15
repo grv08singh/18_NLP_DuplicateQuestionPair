@@ -20,7 +20,7 @@ def get_requirements(file_path: str) -> List[str]:
         return []
 
 SRC_NAME = "NLP_Duplicate_Question_Pair"
-VERSION = "0.0.1"
+VERSION = "0.0.4"
 AUTHOR = "Gaurav Singh"
 AUTHOR_EMAIL = "grv08singh@gmail.com"
 AUTHOR_USERNAME = "grv08singh"
@@ -34,5 +34,3 @@ setup(
     install_requires=get_requirements('requirements.txt'),
     url=f"https://github.com/{AUTHOR_USERNAME}/{REPO_NAME}"
 )
-
-get_requirements('requirements.txt')
