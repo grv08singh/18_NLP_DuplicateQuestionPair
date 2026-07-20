@@ -35,7 +35,6 @@ list_of_files = [
     "src/constants/__init__.py",
     "src/entities/__init__.py",
     "src/entities/config_entity.py",
-    "src/logging/__init__.py",
     "src/pipelines/__init__.py",
     "src/pipelines/p1_data_ingestion_pipeline.py",
     "src/pipelines/p2_data_preprocessing_pipeline.py",
