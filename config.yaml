@@ -1,0 +1,29 @@
+artifacts_root: "artifacts"
+
+data_ingestion:
+  root_dir: "artifacts/01_data_ingestion"
+  local_data_file: "notebooks/data/01_train.csv"
+  raw_data_path: "artifacts/01_data_ingestion/raw_data.csv"
+
+data_preprocessing:
+  root_dir: "artifacts/02_preprocessed_data"
+  preprocessed_data_path: "artifacts/02_preprocessed_data/preprocessed_data.csv"
+
+data_processing:
+  root_dir: "artifacts/03_processed_data"
+  processed_data: "artifacts/03_processed_data/processed_data.csv"
+
+prepare_base_model:
+  root_dir: "artifacts/04_models"
+  base_model_path: "artifacts/04_models/base_model.h5"
+  
+training:
+  root_dir: "artifacts/05_training"
+  trained_model_path: "artifacts/04_models/trained_model.h5"
+  val_report: "artifacts/05_training/validation_report.yaml"
+
+evaluation:
+  root_dir: "artifacts/06_evaluation"
+  test_dir: "artifacts/01_data_ingestion/test.csv"
+  evaluation_report: "artifacts/06_evaluation/evaluation_report.yaml"
+  mlflow_uri: "http://localhost:5000"
