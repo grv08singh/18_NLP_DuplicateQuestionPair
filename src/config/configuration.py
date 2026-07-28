@@ -1,5 +1,5 @@
 import os
-import logging
+from src.logger import logging
 from src.constants import *
 from src.utils.common import read_yaml, create_directories, save_json
 from src.entities.config_entity import DataIngestionConfig, DataPreProcessingConfig, DataProcessingConfig, PrepareBaseModelConfig, TrainingConfig, EvaluationConfig
@@ -80,4 +80,5 @@ class ConfigurationManager:
             mlflow_uri=config.mlflow_uri
         )
         logging.info("Exited Method: get_evaluation_config")
+        print("1234")
         return evaluation_config

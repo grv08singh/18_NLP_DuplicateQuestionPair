@@ -6,6 +6,8 @@ from ensure import ensure_annotations
 from box import ConfigBox
 from pathlib import Path
 from typing import Any
+import json
+import joblib
 
 @ensure_annotations
 def read_yaml(path: Path) -> ConfigBox:
@@ -19,7 +21,7 @@ def read_yaml(path: Path) -> ConfigBox:
         raise ValueError("YAML file is empty")
     except Exception as e:
         logging.info(f"Error occurred while loading YAML: {path}")
-        raise e:
+        raise e
 
 @ensure_annotations
 def create_directories(path_list: list, verbose=True):

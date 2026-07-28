@@ -2,8 +2,8 @@ artifacts_root: "artifacts"
 
 data_ingestion:
   root_dir: "artifacts/01_data_ingestion"
-  local_data: "notebooks/data/01_train.csv"
-  raw_data: "artifacts/01_data_ingestion/raw_data.csv"
+  local_data_file: "notebooks/data/01_train.csv"
+  raw_data_file: "artifacts/01_data_ingestion/raw_data.csv"
 
 data_preprocessing:
   root_dir: "artifacts/02_preprocessed_data"
