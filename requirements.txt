@@ -9,4 +9,9 @@ nltk>=3.8.1
 gensim>=4.3.2
 tqdm>=4.66.0
 setuptools==69.5.1
+numba==0.64.0
+contractions==0.1.73
+textblob==0.20.0
+emoji==2.15.0
+symspellpy==6.9.0
 -e .

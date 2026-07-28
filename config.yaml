@@ -4,9 +4,13 @@ data_ingestion:
   root_dir: "artifacts/01_data_ingestion"
   local_data_file: "notebooks/data/01_train.csv"
   raw_data_file: "artifacts/01_data_ingestion/raw_data.csv"
+  src_chatwords_file: "notebooks/data/chatwords.yaml"
+  dest_chatwords_file: "artifacts/01_data_ingestion/chatwords.yaml"
 
 data_preprocessing:
   root_dir: "artifacts/02_preprocessed_data"
+  raw_data_file: "artifacts/01_data_ingestion/raw_data.csv"
+  chatwords_file: "artifacts/01_data_ingestion/chatwords.yaml"
   preprocessed_data: "artifacts/02_preprocessed_data/preprocessed_data.csv"
 
 data_processing:

@@ -20,7 +20,7 @@ def get_requirements(file_path: str) -> List[str]:
         return []
 
 SRC_NAME = "NLP_Duplicate_Question_Pair"
-VERSION = "0.0.4"
+VERSION = "0.0.5"
 AUTHOR = "Gaurav Singh"
 AUTHOR_EMAIL = "grv08singh@gmail.com"
 AUTHOR_USERNAME = "grv08singh"

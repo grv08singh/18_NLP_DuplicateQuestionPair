@@ -11,7 +11,11 @@ class DataIngestion:
     
     def create_raw_data(self):
         logging.info("Entered Method create_raw_data of DataIngestion")
-        src_path = self.config.local_data_file
-        dest_path = self.config.raw_data_file
-        shutil.copy(src_path, dest_path)
+        data_src = self.config.local_data_file
+        data_dest = self.config.raw_data_file
+        shutil.copy(data_src, data_dest)
+        
+        chatwords_src = self.config.src_chatwords_file
+        chatwords_dest = self.config.dest_chatwords_file
+        shutil.copy(chatwords_src, chatwords_dest)
         logging.info("Exited Method create_raw_data of DataIngestion")

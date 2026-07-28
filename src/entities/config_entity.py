@@ -6,10 +6,14 @@ class DataIngestionConfig:
     root_dir: Path
     local_data_file: Path
     raw_data_file: Path
+    src_chatwords_file: Path
+    dest_chatwords_file: Path
 
 @dataclass(frozen=True)
 class DataPreProcessingConfig:
     root_dir: Path
+    raw_data_file: Path
+    chatwords_file: Path
     preprocessed_data: Path
 
 @dataclass(frozen=True)

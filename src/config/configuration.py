@@ -19,7 +19,9 @@ class ConfigurationManager:
         data_ingestion_config = DataIngestionConfig(
             root_dir=config.root_dir,
             local_data_file=config.local_data_file,
-            raw_data_file=config.raw_data_file
+            raw_data_file=config.raw_data_file,
+            src_chatwords_file=config.src_chatwords_file,
+            dest_chatwords_file=config.dest_chatwords_file
         )
         logging.info("Exited Method: get_data_ingestion_config")
         return data_ingestion_config
@@ -29,7 +31,9 @@ class ConfigurationManager:
         config = self.config.data_preprocessing
         create_directories([config.root_dir])
         data_preprocessing_config = DataPreProcessingConfig(
+            raw_data_file=config.raw_data_file,
             root_dir=config.root_dir,
+            chatwords_file=config.chatwords_file,
             preprocessed_data=config.preprocessed_data
         )
         logging.info("Exited Method: get_data_preprocessing_config")
