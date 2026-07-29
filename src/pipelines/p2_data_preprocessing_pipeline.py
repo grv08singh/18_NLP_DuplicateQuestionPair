@@ -1,6 +1,3 @@
-import os
-from pathlib import Path
-import yaml
 from src.logger import logging
 from src.config.configuration import ConfigurationManager
 from src.components.c2_data_preprocessing import DataPreProcessing

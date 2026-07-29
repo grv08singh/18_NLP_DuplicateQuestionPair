@@ -1,20 +1,17 @@
-#import cudf.pandas
-#cudf.pandas.install()
+import cudf.pandas
+cudf.pandas.install()
 import pandas as pd
-
-import numba
 import yaml
 from src.entities.config_entity import DataPreProcessingConfig
 from src.logger import logging
 import re
 import contractions
 import tqdm
-from tqdm import tqdm
+from tqdm.auto import tqdm
 import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
-from symspellpy import SymSpell, Verbosity
-import pkg_resources
+from textblob import TextBlob
 
 class DataPreProcessing:
     def __init__(self, config: DataPreProcessingConfig):
@@ -132,38 +129,16 @@ class DataPreProcessing:
         logging.info("Exited Method remove_extra_whitespace")
         return df
     
+    def _correct_text(self, text):
+        if not isinstance(text, str):
+            return text
+        return str(TextBlob(text).correct())
+
     def correct_spelling(self, df):
         logging.info("Entered Method correct_spelling")
-        # correct spellings using symspellpy
-        tokens_series1 = df['question1'].str.findall(r'\b[a-z]+\b')
-        tokens_series2 = df['question2'].str.findall(r'\b[a-z]+\b')
-        tokens_series = pd.concat([tokens_series1,tokens_series2], axis=0, ignore_index=True) #tokenization per row
-
-        all_words = tokens_series.explode().dropna()   # all unique words
-        unique_words = all_words.unique()#.to_pandas()  # CPU transfer
-
-        sym = SymSpell(max_dictionary_edit_distance=2, prefix_length=7)
-        dict_path = pkg_resources.resource_filename(
-            "symspellpy", "frequency_dictionary_en_82_765.txt"
-        )
-        sym.load_dictionary(dict_path, term_index=0, count_index=1)
-
-        # creating spell correction map (dictionary) for current data
-        correction_map = {}
-        for word in unique_words:
-            if word not in sym.words:  # word not in dictionary → likely misspelled
-                suggestions = sym.lookup(word, Verbosity.CLOSEST, max_edit_distance=2)
-                if suggestions:
-                    correction_map[word] = suggestions[0].term
-
-        # correcting the spellings
-        corrected_q1 = df['question1']
-        corrected_q2 = df['question2']
-        for wrong, right in tqdm(correction_map.items(), desc="Correcting Questions"):
-            corrected_q1 = corrected_q1.str.replace(rf'\b{re.escape(wrong)}\b', right, regex=True)
-            corrected_q2 = corrected_q2.str.replace(rf'\b{re.escape(wrong)}\b', right, regex=True)
-        df['question1'] = corrected_q1
-        df['question2'] = corrected_q2
+        tqdm.pandas(desc="Correcting Spellings...")
+        df['question1'] = df['question1'].progress_apply(self._correct_text)
+        df['question2'] = df['question2'].progress_apply(self._correct_text)
         logging.info("Exited Method correct_spelling")
         return df
     
@@ -182,7 +157,7 @@ class DataPreProcessing:
         df = self.expand_contractions(df)
         df = self.expand_chatwords(df)
         df = self.replace_symbols(df)
-        #df = self.remove_stopwords(df)
+        ####df = self.remove_stopwords(df)
         df = self.remove_emojis(df)
         df = self.remove_punctuations(df)
         df = self.remove_extra_whitespace(df)
