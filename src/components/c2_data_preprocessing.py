@@ -182,7 +182,7 @@ class DataPreProcessing:
         df = self.expand_contractions(df)
         df = self.expand_chatwords(df)
         df = self.replace_symbols(df)
-        df = self.remove_stopwords(df)
+        #df = self.remove_stopwords(df)
         df = self.remove_emojis(df)
         df = self.remove_punctuations(df)
         df = self.remove_extra_whitespace(df)
