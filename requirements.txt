@@ -17,6 +17,7 @@ nltk==3.10.0
 gensim==4.4.0
 contractions==0.1.73
 textblob==0.20.1
+transformers>=4.40.0
 emoji==2.15.0
 symspellpy==6.10.0
 

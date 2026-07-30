@@ -11,12 +11,16 @@ from tqdm.auto import tqdm
 import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
-from textblob import TextBlob
+from symspellpy import SymSpell
+import pkg_resources
 
 class DataPreProcessing:
     def __init__(self, config: DataPreProcessingConfig):
         logging.info("DataPreProcessing class Initialization started")
         self.config = config
+        self.sym_spell = SymSpell(max_dictionary_edit_distance=2)
+        dict_path = pkg_resources.resource_filename("symspellpy", "frequency_dictionary_en_82_765.txt")
+        self.sym_spell.load_dictionary(dict_path, term_index=0, count_index=1)
         logging.info("DataPreProcessing class Initialization completed")
     
     def remove_unnecessary_cols(self, df):
@@ -121,24 +125,29 @@ class DataPreProcessing:
         df['question2'] = df['question2'].str.replace(r'''[!"#$%&\'()*+,\-./:;<=>?@\[\\\]^_`{|}~]''',' ',regex=True)
         logging.info("Exited Method remove_punctuations")
         return df
-    
+
     def remove_extra_whitespace(self, df):
         logging.info("Entered Method remove_extra_whitespace")
         df['question1'] = df['question1'].str.strip().str.replace(r'\s+',' ',regex=True)
         df['question2'] = df['question2'].str.strip().str.replace(r'\s+',' ',regex=True)
         logging.info("Exited Method remove_extra_whitespace")
         return df
-    
-    def _correct_text(self, text):
-        if not isinstance(text, str):
-            return text
-        return str(TextBlob(text).correct())
 
     def correct_spelling(self, df):
         logging.info("Entered Method correct_spelling")
-        tqdm.pandas(desc="Correcting Spellings...")
-        df['question1'] = df['question1'].progress_apply(self._correct_text)
-        df['question2'] = df['question2'].progress_apply(self._correct_text)
+        df['question1'] = df['question1'].fillna('')
+        df['question2'] = df['question2'].fillna('')
+
+        def correct_text(text):
+            if not isinstance(text, str) or not text.strip():
+                return ''
+            suggestions = self.sym_spell.lookup_compound(text, max_edit_distance=2)
+            return suggestions[0].term if suggestions else text
+
+        tqdm.pandas(desc="Correcting Spelling q1...")
+        df['question1'] = df['question1'].progress_apply(correct_text)
+        tqdm.pandas(desc="Correcting Spelling q2...")
+        df['question2'] = df['question2'].progress_apply(correct_text)
         logging.info("Exited Method correct_spelling")
         return df
     
