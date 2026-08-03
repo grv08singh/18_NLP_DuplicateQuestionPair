@@ -19,7 +19,23 @@ class DataPreProcessingConfig:
 @dataclass(frozen=True)
 class DataProcessingConfig:
     root_dir: Path
+    preprocessed_data: Path
+    y_path: Path
+    q1_encoded: Path
+    q2_encoded: Path
+    base_emb_model: Path
+    trained_emb_model: Path
+    word_pair_emb: Path
+    emb_matrix: Path
+    q1_emb: Path
+    q2_emb: Path
     processed_data: Path
+    token_window: int
+    emb_dim: int
+    neg_samples: int
+    epochs: int
+    min_token_count: int
+    max_words: int
 
 @dataclass(frozen=True)
 class PrepareBaseModelConfig:

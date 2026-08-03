@@ -15,15 +15,24 @@ data_preprocessing:
 
 data_processing:
   root_dir: "artifacts/03_processed_data"
-  processed_data: "artifacts/03_processed_data/processed_data.csv"
+  preprocessed_data: "artifacts/02_preprocessed_data/preprocessed_data.csv"
+  y_path: "artifacts/03_processed_data/y.csv"
+  q1_encoded: "artifacts/03_processed_data/01_q1_encoded.csv"
+  q2_encoded: "artifacts/03_processed_data/01_q2_encoded.csv"
+  base_emb_model: "artifacts/04_models/01_base_emb_model.h5"
+  trained_emb_model: "artifacts/04_models/02_trained_emb_model.h5"
+  word_pair_emb: "artifacts/03_processed_data/02_word_pair_emb.csv"
+  emb_matrix: "artifacts/03_processed_data/03_emb_matrix.csv"
+  q1_emb: "artifacts/03_processed_data/04_q1_emb.csv"
+  q2_emb: "artifacts/03_processed_data/04_q2_emb.csv"
 
 prepare_base_model:
   root_dir: "artifacts/04_models"
-  base_model: "artifacts/04_models/base_model.h5"
+  base_model: "artifacts/04_models/03_base_model.h5"
   
 training:
   root_dir: "artifacts/05_training"
-  trained_model: "artifacts/04_models/trained_model.h5"
+  trained_model: "artifacts/04_models/04_trained_model.h5"
   val_report: "artifacts/05_training/validation_report.yaml"
 
 evaluation:

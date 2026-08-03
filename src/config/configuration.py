@@ -42,10 +42,27 @@ class ConfigurationManager:
     def get_data_processing_config(self) -> DataProcessingConfig:
         logging.info("Entered Method: get_data_processing_config")
         config = self.config.data_processing
+        params = self.params
         create_directories([config.root_dir])
         data_processing_config = DataProcessingConfig(
             root_dir=config.root_dir,
-            processed_data=config.processed_data
+            preprocessed_data=config.preprocessed_data,
+            y_path=config.y_path,
+            q1_encoded=config.q1_encoded,
+            q2_encoded=config.q2_encoded,
+            base_emb_model=config.base_emb_model,
+            trained_emb_model=config.trained_emb_model,
+            word_pair_emb=config.word_pair_emb,
+            emb_matrix=config.emb_matrix,
+            q1_emb=config.q1_emb,
+            q2_emb=config.q2_emb,
+            processed_data=config.processed_data,
+            token_window=params.TOKEN_WINDOW,
+            emb_dim=params.EMB_DIM,
+            neg_samples=params.NEG_SAMPLES,
+            epochs=params.EPOCHS,
+            min_token_count=params.MIN_TOKEN_COUNT,
+            max_words=params.MAX_WORDS
         )
         logging.info("Exited Method: get_data_processing_config")
         return data_processing_config
