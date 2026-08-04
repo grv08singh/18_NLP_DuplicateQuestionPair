@@ -30,7 +30,7 @@ class DataProcessingConfig:
     q1_emb: Path
     q2_emb: Path
     processed_data: Path
-    token_window: int
+    window_size: int
     emb_dim: int
     neg_samples: int
     epochs: int

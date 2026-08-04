@@ -57,7 +57,7 @@ class ConfigurationManager:
             q1_emb=config.q1_emb,
             q2_emb=config.q2_emb,
             processed_data=config.processed_data,
-            token_window=params.TOKEN_WINDOW,
+            window_size=params.WINDOW_SIZE,
             emb_dim=params.EMB_DIM,
             neg_samples=params.NEG_SAMPLES,
             epochs=params.EPOCHS,

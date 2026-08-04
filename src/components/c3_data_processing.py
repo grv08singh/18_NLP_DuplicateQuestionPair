@@ -32,16 +32,28 @@ class DataProcessing:
         df['is_duplicate'].to_csv(self.config.y_path, index=False)
         logging.info("Exited Method save_y")
     
-    def split_txt(self, text):
-        logging.info("Entered Method split_txt")
-        logging.info("Exited Method split_txt")
+    def tokenize(self, text):
+        logging.info("Entered Method tokenize")
+        text = str(text).lower()
+        text = re.sub(r"[^a-z0-9\s]", " ", text)
+        logging.info("Exited Method tokenize")
         return text.split()
+    
+    def build_vocab(self, df):
+        logging.info("Entered Method build_vocab")
+        #tokenize each feature
+        df['tok1'] = df['question1'].apply(self.tokenize)
+        df['tok2'] = df['question2'].apply(self.tokenize)
+        #all sentences
+        all_sentences = 
+        logging.info("Exited Method build_vocab")
+        
     
     def build_corpus(self, df):
         logging.info("Entered Method build_corpus")
         for col in ['question1', 'question2']:
             for row in df[col]:
-                row_tokens_list = self.split_txt(row)
+                row_tokens_list = self.tokenize(row)
                 self.corpus.extend(row_tokens_list)
         self.corpus_size = len(self.corpus)
         logging.info("Exited Method build_corpus")
