@@ -34,11 +34,11 @@ class DataProcessingConfig:
     processed_data: Path
     emb_min_token_count: int
     emb_max_words: int
-    emb_window_size = int
+    emb_window_size: int
     emb_dim: int
     emb_neg_samples: int
-    emb_batch_size = int
-    emb_epochs = int
+    emb_batch_size: int
+    emb_epochs: int
     
 
 @dataclass(frozen=True)

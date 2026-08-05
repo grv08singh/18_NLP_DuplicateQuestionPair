@@ -59,13 +59,13 @@ class ConfigurationManager:
             q1_emb=config.q1_emb,
             q2_emb=config.q2_emb,
             processed_data=config.processed_data,
-            emb_min_token_count=config.EMB_MIN_TOKEN_COUNT,
-            emb_max_words=config.EMB_MAX_WORDS,
-            emb_window_size=config.EMB_WINDOW_SIZE,
-            emb_dim=config.EMB_DIM,
-            emb_neg_samples=config.EMB_NEG_SAMPLES,
-            emb_batch_size=config.EMB_BATCH_SIZE,
-            emb_epochs=config.EMB_EPOCHS
+            emb_min_token_count=params.EMB_MIN_TOKEN_COUNT,
+            emb_max_words=params.EMB_MAX_WORDS,
+            emb_window_size=params.EMB_WINDOW_SIZE,
+            emb_dim=params.EMB_DIM,
+            emb_neg_samples=params.EMB_NEG_SAMPLES,
+            emb_batch_size=params.EMB_BATCH_SIZE,
+            emb_epochs=params.EMB_EPOCHS
         )
         logging.info("Exited Method: get_data_processing_config")
         return data_processing_config
