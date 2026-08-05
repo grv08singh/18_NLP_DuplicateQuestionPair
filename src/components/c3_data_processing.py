@@ -60,13 +60,6 @@ class DataProcessing:
         self.pairs = []
         logging.info("DataProcessing class Initialization completed")
 
-    def encode_df(self, df):
-        logging.info("Entered Method encode_df")
-        df['q1_encoded'] = df['question1'].apply(lambda s: self.encode_sentence(s))
-        df['q2_encoded'] = df['question2'].apply(lambda s: self.encode_sentence(s))
-        logging.info("Exited Method encode_df")
-        return df
-
     def save_encoded_questions(self, df):
         logging.info("Entered Method save_encoded_questions")
         q1_encoded_path = self.config.q1_encoded

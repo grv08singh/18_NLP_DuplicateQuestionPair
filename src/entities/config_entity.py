@@ -32,12 +32,14 @@ class DataProcessingConfig:
     q1_emb: Path
     q2_emb: Path
     processed_data: Path
-    window_size: int
+    emb_min_token_count: int
+    emb_max_words: int
+    emb_window_size = int
     emb_dim: int
-    neg_samples: int
-    epochs: int
-    min_token_count: int
-    max_words: int
+    emb_neg_samples: int
+    emb_batch_size = int
+    emb_epochs = int
+    
 
 @dataclass(frozen=True)
 class PrepareBaseModelConfig:
