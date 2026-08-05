@@ -17,6 +17,39 @@ class DataProcessing:
     def __init__(self, config: DataProcessingConfig):
         logging.info("DataProcessing class Initialization started")
         self.config = config
+        self.vocab = []
+        self.vocab_size = 0
+        logging.info("DataProcessing class Initialization completed")
+    
+    def tokenize(self, text):
+        text = str(text).lower()
+        text = re.sub(r"[^a-z0-9\s]", " ", text)
+        return text.split()
+    
+    def Process(self):
+        logging.info("Entered Method Process")
+        df = pd.read_csv(self.config.X_path)
+        df['tok_1'] = df['question1'].apply(self.tokenize)
+        df['tok_2'] = df['question2'].apply(self.tokenize)
+        
+        all_sentences = df['tok_1'].tolist() + df['tok_2'].tolist()
+        counter = Counter([word for sent in all_sentences for word in sent])
+        self.vocab = ['<pad>', '<unk>'] + [word for word, count in counter.items() if count >= 5]
+        self.vocab_size = len(self.vocab)
+        
+        self.word2idx = {word: idx for idx, word in enumerate(self.vocab)}
+        self.idx2word = {idx: word for word, idx in self.word2idx.items()}
+        
+        enc_sentences = [[self.word2idx.get(word, 1) for word in sent] for sent in all_sentences]
+        
+        logging.info("Exited Method Process")
+
+
+'''
+class DataProcessing:
+    def __init__(self, config: DataProcessingConfig):
+        logging.info("DataProcessing class Initialization started")
+        self.config = config
         self.corpus = []
         self.corpus_size = 0
         self.counter = Counter()
@@ -26,75 +59,6 @@ class DataProcessing:
         self.token_list = []
         self.pairs = []
         logging.info("DataProcessing class Initialization completed")
-        
-    def save_y(self, df):
-        logging.info("Entered Method save_y")
-        df['is_duplicate'].to_csv(self.config.y_path, index=False)
-        logging.info("Exited Method save_y")
-    
-    def tokenize(self, text):
-        logging.info("Entered Method tokenize")
-        text = str(text).lower()
-        text = re.sub(r"[^a-z0-9\s]", " ", text)
-        logging.info("Exited Method tokenize")
-        return text.split()
-    
-    def build_vocab(self, df):
-        logging.info("Entered Method build_vocab")
-        #tokenize each feature
-        df['tok1'] = df['question1'].apply(self.tokenize)
-        df['tok2'] = df['question2'].apply(self.tokenize)
-        #all sentences
-        all_sentences = 
-        logging.info("Exited Method build_vocab")
-        
-    
-    def build_corpus(self, df):
-        logging.info("Entered Method build_corpus")
-        for col in ['question1', 'question2']:
-            for row in df[col]:
-                row_tokens_list = self.tokenize(row)
-                self.corpus.extend(row_tokens_list)
-        self.corpus_size = len(self.corpus)
-        logging.info("Exited Method build_corpus")
-    
-    def token_counter(self):
-        #counts how many times a unique token appears in total
-        logging.info("Entered Method token_counter")
-        self.counter = Counter(self.corpus)
-        logging.info("Exited Method token_counter")
-    
-    def log_token_counts(self):
-        #check how many times each token appears
-        logging.info("Entered Method print_token_counts")
-        for token, count in self.counter.items():
-            logging.info(f"Token: {token}, Count: {count}")
-        logging.info("Exited Method print_token_counts")
-    
-    def build_vocab_list(self):
-        logging.info("Entered Method build_vocab_list")
-        #builds vocabulary list from token counter object
-        self.vocab_list = ['<pad>','<unk>'] + [token for token, count in self.counter.items() if count >= self.config.min_token_count]
-        self.vocab_size = len(self.vocab_list)
-        logging.info("Exited Method build_vocab_list")
-        
-    def build_vocab_idx(self):
-        #builds a dictionary with vocabulary index
-        logging.info("Entered Method build_vocab_idx")
-        self.vocab_with_idx = {w:i for i,w in enumerate(self.vocab_list)}
-        logging.info("Exited Method build_vocab_idx")
-    
-    def encode_sentence(self, sent):
-        #encodes a sentence into a list of vocabulary indices
-        logging.info("Entered Method encode_sentence")
-        max_words = self.config.max_words
-        vocab = self.vocab_with_idx    #dictionary of token:idx
-        unk_word_idx = vocab['<unk>']
-        encoded_sent = [vocab.get(token, unk_word_idx) for token in sent]
-        encoded_sent = encoded_sent[:max_words]    #cap the no. of words
-        encoded_sent += [0] * (max_words - len(encoded_sent))    #pad with zeros to make sentence of length 50 tokens
-        logging.info("Exited Method encode_sentence")
-        return encoded_sent
 
     def encode_df(self, df):
         logging.info("Entered Method encode_df")
@@ -113,6 +77,7 @@ class DataProcessing:
         
     def build_skipgram_pairs(self):
         logging.info("Entered Method build_skipgram_pairs")
-        window = self.config.token_window
+        window_size = self.config.window_size
         
         logging.info("Entered Method build_skipgram_pairs")
+'''

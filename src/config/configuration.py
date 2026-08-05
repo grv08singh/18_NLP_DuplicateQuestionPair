@@ -34,7 +34,9 @@ class ConfigurationManager:
             raw_data_file=config.raw_data_file,
             root_dir=config.root_dir,
             chatwords_file=config.chatwords_file,
-            preprocessed_data=config.preprocessed_data
+            preprocessed_data=config.preprocessed_data,
+            X_path=config.y_path,
+            y_path=config.y_path,
         )
         logging.info("Exited Method: get_data_preprocessing_config")
         return data_preprocessing_config
@@ -47,7 +49,7 @@ class ConfigurationManager:
         data_processing_config = DataProcessingConfig(
             root_dir=config.root_dir,
             preprocessed_data=config.preprocessed_data,
-            y_path=config.y_path,
+            X_path=config.y_path,
             q1_encoded=config.q1_encoded,
             q2_encoded=config.q2_encoded,
             base_emb_model=config.base_emb_model,

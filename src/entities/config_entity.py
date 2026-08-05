@@ -15,12 +15,14 @@ class DataPreProcessingConfig:
     raw_data_file: Path
     chatwords_file: Path
     preprocessed_data: Path
+    X_path: Path
+    y_path: Path
 
 @dataclass(frozen=True)
 class DataProcessingConfig:
     root_dir: Path
     preprocessed_data: Path
-    y_path: Path
+    X_path: Path
     q1_encoded: Path
     q2_encoded: Path
     base_emb_model: Path

@@ -150,13 +150,17 @@ class DataPreProcessing:
         df['question2'] = df['question2'].progress_apply(correct_text)
         logging.info("Exited Method correct_spelling")
         return df
+
+    def save_X_y(self, df):
+        logging.info("Entered Method save_y")
+        df[['question1','question2']].to_csv(self.config.X_path, index=False)
+        df['is_duplicate'].to_csv(self.config.y_path, index=False)
+        df.to_csv(self.config.preprocessed_data, index=False)
+        logging.info("Exited Method save_y")
     
     def preprocess(self):
         logging.info("Entered Method preprocess")
-        raw_df_path = self.config.raw_data_file
-        preprocessed_df_path = self.config.preprocessed_data
-        # load raw csv
-        df = pd.read_csv(raw_df_path)
+        df = pd.read_csv(self.config.raw_data_file)
         
         # preprocessing
         df = self.remove_unnecessary_cols(df)
@@ -173,5 +177,5 @@ class DataPreProcessing:
         df = self.correct_spelling(df)
         
         # save preprocessed csv
-        df.to_csv(preprocessed_df_path, index=False)
+        self.save_X_y(df)
         logging.info("Exited Method preprocess")
