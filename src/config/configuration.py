@@ -49,7 +49,7 @@ class ConfigurationManager:
         data_processing_config = DataProcessingConfig(
             root_dir=config.root_dir,
             preprocessed_data=config.preprocessed_data,
-            X_path=config.y_path,
+            X_path=config.X_path,
             q1_encoded=config.q1_encoded,
             q2_encoded=config.q2_encoded,
             base_emb_model=config.base_emb_model,
@@ -58,7 +58,6 @@ class ConfigurationManager:
             emb_matrix=config.emb_matrix,
             q1_emb=config.q1_emb,
             q2_emb=config.q2_emb,
-            processed_data=config.processed_data,
             emb_min_token_count=params.EMB_MIN_TOKEN_COUNT,
             emb_max_words=params.EMB_MAX_WORDS,
             emb_window_size=params.EMB_WINDOW_SIZE,

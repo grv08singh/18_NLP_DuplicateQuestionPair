@@ -7,11 +7,19 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 import re
+import random
 from collections import Counter
 from src.config.configuration import DataProcessingConfig
 from src.logger import logging
 import tqdm
 from tqdm.auto import tqdm
+
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+if torch.cuda.is_available():
+    torch.cuda.manual_seed_all(SEED)
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -48,6 +56,7 @@ class DataProcessing:
         self.config = config
         self.vocab = []
         self.vocab_size = 0
+        self.embedding_matrix = np.zeros(self.config.emb_dim)
         logging.info("DataProcessing class Initialization completed")
     
     def tokenize(self, text):
@@ -67,37 +76,48 @@ class DataProcessing:
                         pairs.append((cen_word, enc_sent[j]))
         return pairs
     
-    def Process(self):
+    def sentence_embeddings(self, tokens):
+        idxs = [self.word2idx[w] for w in tokens if w in self.word2idx]
+        if idxs:
+            return self.embedding_matrix[idxs].mean(axis=0)
+    
+    def sentence_embedding(self, tokens) -> pd.Series:
+        idxs = [self.word2idx[w] for w in tokens if w in self.word2idx]
+        if not idxs:
+            return pd.Series(np.zeros(self.config.emb_dim))
+        return pd.Series(self.embedding_matrix[idxs].mean(axis=0))
+    
+    def Process(self) -> None:
         logging.info("Entered Method Process")
         df = pd.read_csv(self.config.X_path)
-        df['tok_1'] = df['question1'].apply(self.tokenize)
-        df['tok_2'] = df['question2'].apply(self.tokenize)
-        
-        all_sentences = df['tok_1'].tolist() + df['tok_2'].tolist()
+        df['tok_q1'] = df['question1'].apply(self.tokenize)
+        df['tok_q2'] = df['question2'].apply(self.tokenize)
+        # generate vocab
+        all_sentences = df['tok_q1'].tolist() + df['tok_q2'].tolist()
         counter = Counter([word for sent in all_sentences for word in sent])
         self.vocab = ['<pad>', '<unk>'] + [word for word, count in counter.items() if count >= 5]
         self.vocab_size = len(self.vocab)
-        
+        # generate index to each word in vocab
         self.word2idx = {word: idx for idx, word in enumerate(self.vocab)}
         self.idx2word = {idx: word for word, idx in self.word2idx.items()}
-        
+        # generate encoded sentences from vocab & idx
         enc_sentences = [[self.word2idx.get(word, 1) for word in sent] for sent in all_sentences]
         pairs = self.generate_pairs(enc_sentences, window_size=self.config.emb_window_size)
-        
+        # generate a list of word frequency
         word_freq = np.array([counter[self.idx2word[i]] for i in range(self.vocab_size)])
+        # generate negative sampling tensor
         neg_sampling = word_freq ** (3/4)
         neg_sampling /= neg_sampling.sum()
         neg_sampling_tensor = torch.tensor(neg_sampling, dtype=torch.float)
         
-        #create embedding model
+        # create embedding model
         model = SkipGramEmbModel(self.vocab_size, self.config.emb_dim).to(DEVICE)
         torch.save(model, self.config.base_emb_model)
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
         dataset = SkipGramCustomDataset(pairs)
         loader = DataLoader(dataset, batch_size=self.config.emb_batch_size, shuffle=True)
-        neg_sampling_tensor = torch.tensor(neg_sampling, dtype=torch.float)
         
-        #run model
+        # train embedding model
         for epoch in range(self.config.emb_epochs):
             total_loss = 0
             for center, context in tqdm(loader, desc="Generating Embeddings..."):
@@ -112,14 +132,22 @@ class DataProcessing:
                 optimizer.step()
                 total_loss += loss.item()
             print(f"Epoch {epoch+1}, Loss: {total_loss/len(loader):.4f}")
-        
+        # save trained embedding model
         torch.save(model, self.config.trained_emb_model)
-        
-        embedding_matrix = model.in_embed.weight.detach()
-        embedding_np = embedding_matrix.cpu().numpy()
-        embedding_df = pd.DataFrame(embedding_np,
-                                columns=[f"dim_{i}" for i in range(embedding_np.shape[1])])
+        # get and save embeddings matrix
+        self.embedding_matrix = model.in_embed.weight.detach().cpu().numpy()
+        embedding_df = pd.DataFrame(self.embedding_matrix,
+                                columns=[f"dim_{i}" for i in range(self.embedding_matrix.shape[1])])
         embedding_df.insert(0, 'word', self.vocab)
         embedding_df.to_csv('word_pair_emb_matrix.csv', index=False)
+        # generate sentence embeddings
+        df['emb_q1'] = df['tok_q1'].apply(self.sentence_embedding)
+        df['emb_q2'] = df['tok_q2'].apply(self.sentence_embedding)
+        
+        emb_q1_matrix = df['emb_q1'].to_numpy()
+        emb_q2_matrix = df['emb_q2'].to_numpy()
+        
+        np.save('question1_embeddings.npy', emb_q1_matrix)
+        np.save('question2_embeddings.npy', emb_q2_matrix)
         
         logging.info("Exited Method Process")

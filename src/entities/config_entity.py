@@ -31,7 +31,6 @@ class DataProcessingConfig:
     emb_matrix: Path
     q1_emb: Path
     q2_emb: Path
-    processed_data: Path
     emb_min_token_count: int
     emb_max_words: int
     emb_window_size: int

@@ -12,13 +12,13 @@ data_preprocessing:
   raw_data_file: "artifacts/01_data_ingestion/raw_data.csv"
   chatwords_file: "artifacts/01_data_ingestion/chatwords.yaml"
   preprocessed_data: "artifacts/02_preprocessed_data/preprocessed_data.csv"
-  X_path: "artifacts/03_processed_data/X.csv"
-  y_path: "artifacts/03_processed_data/y.csv"
+  X_path: "artifacts/02_preprocessed_data/X.csv"
+  y_path: "artifacts/02_preprocessed_data/y.csv"
 
 data_processing:
   root_dir: "artifacts/03_processed_data"
   preprocessed_data: "artifacts/02_preprocessed_data/preprocessed_data.csv"
-  X_path: "artifacts/03_processed_data/X.csv"
+  X_path: "artifacts/02_preprocessed_data/X.csv"
   q1_encoded: "artifacts/03_processed_data/01_q1_encoded.csv"
   q2_encoded: "artifacts/03_processed_data/01_q2_encoded.csv"
   base_emb_model: "artifacts/04_models/01_base_emb_model.h5"
