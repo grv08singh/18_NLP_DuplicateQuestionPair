@@ -14,6 +14,7 @@ from src.logger import logging
 import tqdm
 from tqdm.auto import tqdm
 from sentence_transformers import SentenceTransformer
+import pickle
 
 SEED = 42
 random.seed(SEED)
@@ -77,11 +78,6 @@ class DataProcessing:
                         pairs.append((cen_word, enc_sent[j]))
         return pairs
     
-    def sentence_embeddings(self, tokens):
-        idxs = [self.word2idx[w] for w in tokens if w in self.word2idx]
-        if idxs:
-            return self.embedding_matrix[idxs].mean(axis=0)
-    
     def sentence_embedding(self, tokens) -> pd.Series:
         idxs = [self.word2idx[w] for w in tokens if w in self.word2idx]
         if not idxs:
@@ -102,6 +98,8 @@ class DataProcessing:
         # generate index to each word in vocab
         self.word2idx = {word: idx for idx, word in enumerate(self.vocab)}
         self.idx2word = {idx: word for word, idx in self.word2idx.items()}
+        with open(self.config.word2idx_path, 'wb') as f:
+            pickle.dump(self.word2idx, f)
         
         # generate encoded sentences from vocab & idx
         enc_sentences = [[self.word2idx.get(word, 1) for word in sent] for sent in all_sentences]

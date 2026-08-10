@@ -61,6 +61,8 @@ class DataPreProcessing:
         df['question2'] = question2
         logging.info("Exited Method expand_contractions")
         return df
+        
+        
     
     def expand_chatwords(self, df):
         logging.info("Entered Method expand_chatwords")
@@ -77,6 +79,7 @@ class DataPreProcessing:
         df['question2'] = question2
         logging.info("Exited Method expand_chatwords")
         return df
+        
     
     def replace_symbols(self, df):
         logging.info("Entered Method replace_symbols")
