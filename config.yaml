@@ -19,6 +19,7 @@ data_processing:
   root_dir: "artifacts/03_processed_data"
   model_dir: "artifacts/04_models"
   X_path: "artifacts/02_preprocessed_data/X.csv"
+  word2idx_path: "artifacts/04_models/01_word2idx.pkl"
   trained_emb_model: "artifacts/04_models/02_own_trained_emb_model.h5"
   bert_emb_model: "artifacts/04_models/03_bert_emb_model.h5"
   word_pair_emb: "artifacts/03_processed_data/02_word_pair_emb.csv"
@@ -51,3 +52,12 @@ evaluation:
   test_dir: "artifacts/01_data_ingestion/test.csv"
   evaluation_report: "artifacts/06_evaluation/evaluation_report.yaml"
   mlflow_uri: "http://localhost:5000"
+
+prediction:
+  root_dir: "artifacts/07_prediction"
+  chatwords_file: "artifacts/01_data_ingestion/chatwords.yaml"
+  word2idx_path: "artifacts/04_models/01_word2idx.pkl"
+  emb_matrix: "artifacts/03_processed_data/03_emb_matrix.csv"
+  bert_emb_model: "artifacts/04_models/03_bert_emb_model.h5"
+  trained_model_with_own_emb: "artifacts/04_models/05_trained_model_with_own_emb.h5"
+  trained_model_with_bert_emb: "artifacts/04_models/05_trained_model_with_bert_emb.h5"
