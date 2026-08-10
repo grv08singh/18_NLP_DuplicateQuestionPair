@@ -153,9 +153,10 @@ class DataPreProcessing:
 
     def save_X_y(self, df):
         logging.info("Entered Method save_y")
+        df = df.dropna(subset=['question1', 'question2','is_duplicate']).reset_index(drop=True)
+        df.to_csv(self.config.preprocessed_data, index=False)
         df[['question1','question2']].to_csv(self.config.X_path, index=False)
         df['is_duplicate'].to_csv(self.config.y_path, index=False)
-        df.to_csv(self.config.preprocessed_data, index=False)
         logging.info("Exited Method save_y")
     
     def preprocess(self):

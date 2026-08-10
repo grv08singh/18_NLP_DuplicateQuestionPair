@@ -13,6 +13,7 @@ from src.config.configuration import DataProcessingConfig
 from src.logger import logging
 import tqdm
 from tqdm.auto import tqdm
+from sentence_transformers import SentenceTransformer
 
 SEED = 42
 random.seed(SEED)
@@ -87,24 +88,28 @@ class DataProcessing:
             return pd.Series(np.zeros(self.config.emb_dim))
         return pd.Series(self.embedding_matrix[idxs].mean(axis=0))
     
-    def Process(self) -> None:
-        logging.info("Entered Method Process")
-        df = pd.read_csv(self.config.X_path)
+    def own_emb_model(self, df):
+        logging.info("Entered Method own_emb_model")
         df['tok_q1'] = df['question1'].apply(self.tokenize)
         df['tok_q2'] = df['question2'].apply(self.tokenize)
+        
         # generate vocab
         all_sentences = df['tok_q1'].tolist() + df['tok_q2'].tolist()
         counter = Counter([word for sent in all_sentences for word in sent])
         self.vocab = ['<pad>', '<unk>'] + [word for word, count in counter.items() if count >= 5]
         self.vocab_size = len(self.vocab)
+        
         # generate index to each word in vocab
         self.word2idx = {word: idx for idx, word in enumerate(self.vocab)}
         self.idx2word = {idx: word for word, idx in self.word2idx.items()}
+        
         # generate encoded sentences from vocab & idx
         enc_sentences = [[self.word2idx.get(word, 1) for word in sent] for sent in all_sentences]
         pairs = self.generate_pairs(enc_sentences, window_size=self.config.emb_window_size)
+        
         # generate a list of word frequency
         word_freq = np.array([counter[self.idx2word[i]] for i in range(self.vocab_size)])
+        
         # generate negative sampling tensor
         neg_sampling = word_freq ** (3/4)
         neg_sampling /= neg_sampling.sum()
@@ -112,7 +117,6 @@ class DataProcessing:
         
         # create embedding model
         model = SkipGramEmbModel(self.vocab_size, self.config.emb_dim).to(DEVICE)
-        torch.save(model, self.config.base_emb_model)
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
         dataset = SkipGramCustomDataset(pairs)
         loader = DataLoader(dataset, batch_size=self.config.emb_batch_size, shuffle=True)
@@ -139,15 +143,54 @@ class DataProcessing:
         embedding_df = pd.DataFrame(self.embedding_matrix,
                                 columns=[f"dim_{i}" for i in range(self.embedding_matrix.shape[1])])
         embedding_df.insert(0, 'word', self.vocab)
-        embedding_df.to_csv('word_pair_emb_matrix.csv', index=False)
-        # generate sentence embeddings
-        df['emb_q1'] = df['tok_q1'].apply(self.sentence_embedding)
-        df['emb_q2'] = df['tok_q2'].apply(self.sentence_embedding)
+        embedding_df.to_csv(self.config.emb_matrix, index=False)
         
-        emb_q1_matrix = df['emb_q1'].to_numpy()
-        emb_q2_matrix = df['emb_q2'].to_numpy()
+        emb_q1 = df['tok_q1'].apply(self.sentence_embedding)
+        emb_q2 = df['tok_q2'].apply(self.sentence_embedding)
         
-        np.save('question1_embeddings.npy', emb_q1_matrix)
-        np.save('question2_embeddings.npy', emb_q2_matrix)
+        emb_q1 = emb_q1.to_numpy()
+        emb_q2 = emb_q2.to_numpy()
+        np.save(self.config.q1_emb_own, emb_q1)
+        np.save(self.config.q2_emb_own, emb_q2)
+
+        df_q1 = pd.DataFrame(emb_q1, columns=[f'q1_dim_{i}' for i in range(emb_q1.shape[1])])
+        df_q2 = pd.DataFrame(emb_q2, columns=[f'q2_dim_{i}' for i in range(emb_q2.shape[1])])
+        df = pd.concat([df_q1, df_q2], axis=1)
+        df.to_csv(self.config.emb_data_own, index=False)
+        logging.info("Exited Method own_emb_model")
+    
+    def bert_emb_model(self, df):
+        logging.info("Entered Method bert_emb_model")
+        model = SentenceTransformer('all-MiniLM-L6-v2', device='cuda')
+        model.save(str(self.config.bert_emb_model))
+        emb_q1 = model.encode(
+            df['question1'].fillna('').astype(str).tolist(),
+            batch_size=256,
+            show_progress_bar=True,
+            convert_to_numpy=True
+        )
+        emb_q2 = model.encode(
+            df['question2'].fillna('').astype(str).tolist(),
+            batch_size=256,
+            show_progress_bar=True,
+            convert_to_numpy=True
+        )
+        np.save(self.config.q1_emb_bert, emb_q1)
+        np.save(self.config.q2_emb_bert, emb_q2)
+
+        df_q1 = pd.DataFrame(emb_q1, columns=[f'q1_dim_{i}' for i in range(emb_q1.shape[1])])
+        df_q2 = pd.DataFrame(emb_q2, columns=[f'q2_dim_{i}' for i in range(emb_q2.shape[1])])
+        df = pd.concat([df_q1, df_q2], axis=1)
+        df.to_csv(self.config.emb_data_bert, index=False)
+        logging.info("Exited Method bert_emb_model")
+    
+    def Process(self) -> None:
+        logging.info("Entered Method Process")
+        df = pd.read_csv(self.config.X_path)
+        
+        if self.config.own_emb_model == True:
+            self.own_emb_model(df)
+        else:
+            self.bert_emb_model(df)
         
         logging.info("Exited Method Process")
