@@ -17,25 +17,34 @@ data_preprocessing:
 
 data_processing:
   root_dir: "artifacts/03_processed_data"
-  preprocessed_data: "artifacts/02_preprocessed_data/preprocessed_data.csv"
+  model_dir: "artifacts/04_models"
   X_path: "artifacts/02_preprocessed_data/X.csv"
-  q1_encoded: "artifacts/03_processed_data/01_q1_encoded.csv"
-  q2_encoded: "artifacts/03_processed_data/01_q2_encoded.csv"
-  base_emb_model: "artifacts/04_models/01_base_emb_model.h5"
-  trained_emb_model: "artifacts/04_models/02_trained_emb_model.h5"
+  trained_emb_model: "artifacts/04_models/02_own_trained_emb_model.h5"
+  bert_emb_model: "artifacts/04_models/03_bert_emb_model.h5"
   word_pair_emb: "artifacts/03_processed_data/02_word_pair_emb.csv"
   emb_matrix: "artifacts/03_processed_data/03_emb_matrix.csv"
-  q1_emb: "artifacts/03_processed_data/04_q1_emb.csv"
-  q2_emb: "artifacts/03_processed_data/04_q2_emb.csv"
-
-prepare_base_model:
-  root_dir: "artifacts/04_models"
-  base_model: "artifacts/04_models/03_base_model.h5"
+  emb_data_own: "artifacts/03_processed_data/04_emb_data_own.csv"
+  q1_emb_own: "artifacts/03_processed_data/04_q1_emb_own.npy"
+  q2_emb_own: "artifacts/03_processed_data/04_q2_emb_own.npy"
+  emb_data_bert: "artifacts/03_processed_data/05_emb_data_bert.csv"
+  q1_emb_bert: "artifacts/03_processed_data/05_q1_emb_bert.npy"
+  q2_emb_bert: "artifacts/03_processed_data/05_q2_emb_bert.npy"
   
 training:
   root_dir: "artifacts/05_training"
-  trained_model: "artifacts/04_models/04_trained_model.h5"
-  val_report: "artifacts/05_training/validation_report.yaml"
+  model_dir: "artifacts/04_models"
+  y_path: "artifacts/02_preprocessed_data/y.csv"
+  emb_matrix: "artifacts/03_processed_data/emb_matrix.csv"
+  emb_data_own: "artifacts/03_processed_data/04_emb_data_own.csv"
+  q1_emb_own: "artifacts/03_processed_data/04_q1_emb_own.npy"
+  q2_emb_own: "artifacts/03_processed_data/04_q2_emb_own.npy"
+  emb_data_bert: "artifacts/03_processed_data/05_emb_data_bert.csv"
+  q1_emb_bert: "artifacts/03_processed_data/05_q1_emb_bert.npy"
+  q2_emb_bert: "artifacts/03_processed_data/05_q2_emb_bert.npy"
+  trained_model_with_own_emb: "artifacts/04_models/05_trained_model_with_own_emb.h5"
+  trained_model_with_bert_emb: "artifacts/04_models/05_trained_model_with_bert_emb.h5"
+  own_val_report: "artifacts/05_training/own_val_report.json"
+  bert_val_report: "artifacts/05_training/bert_val_report.json"
 
 evaluation:
   root_dir: "artifacts/06_evaluation"
