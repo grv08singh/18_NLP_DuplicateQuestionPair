@@ -1,3 +1,14 @@
+notebooks/02_Processed_Data/
+notebooks/03_Models/
+artifacts/01_data_ingestion/
+artifacts/02_preprocessed_data/
+artifacts/03_processed_data/
+artifacts/04_models/
+artifacts/05_training/
+artifacts/06_evaluation/
+artifacts/07_prediction/
+
+
 .qodo/
 .kilo/
 
